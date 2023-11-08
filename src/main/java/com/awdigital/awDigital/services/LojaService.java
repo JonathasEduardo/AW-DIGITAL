@@ -1,17 +1,18 @@
 package com.awdigital.awDigital.services;
 
 import com.awdigital.awDigital.dtos.LojaDTO;
+import com.awdigital.awDigital.dtos.LojaFindAllDTO;
 import com.awdigital.awDigital.exceptions.ObjectNoteFoundException;
 import com.awdigital.awDigital.models.Cliente;
 import com.awdigital.awDigital.models.Loja;
 import com.awdigital.awDigital.repositorys.LojaRepository;
-import org.hibernate.ObjectNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LojaService {
@@ -32,9 +33,9 @@ public class LojaService {
 
 
 
-    public List <Loja>findAll(Integer id_cat){
-        clienteService.findById(id_cat);
-        return lojaRepository.findAllByCliente(id_cat);
+    public List<LojaFindAllDTO> findAll(Integer id_cat) {
+        List<Loja> lojas = lojaRepository.findAllByCliente(id_cat);
+        return lojas.stream().map(loja -> mapToLojaFindAllDTO(loja)).collect(Collectors.toList());
     }
 
     public Loja save(Integer id_cat, LojaDTO lojaDTO){
@@ -58,6 +59,7 @@ public class LojaService {
     }
 
     public void delete(Integer id){
+        findById(id);
         lojaRepository.deleteById(id);
     }
 
@@ -73,6 +75,14 @@ public class LojaService {
 
     //Metodo auxiliares
 
-
+    private LojaFindAllDTO mapToLojaFindAllDTO(Loja loja) {
+        LojaFindAllDTO dto = new LojaFindAllDTO();
+        dto.setIdLoja(loja.getIdLoja());
+        dto.setNomeLoja(loja.getNomeLoja());
+        dto.setNumeroLoja(loja.getNumeroLoja());
+        dto.setInvestimentoLoja(loja.getInvestimentoLoja());
+        dto.setClienteDTO(clienteService.mapToClienteDTO(loja.getCliente()));
+        return dto;
+    }
 
 }

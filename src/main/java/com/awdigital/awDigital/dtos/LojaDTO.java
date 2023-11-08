@@ -2,6 +2,7 @@ package com.awdigital.awDigital.dtos;
 
 import com.awdigital.awDigital.models.Cliente;
 import com.awdigital.awDigital.models.Loja;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -15,6 +16,7 @@ public class LojaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
 
+    @JsonIgnore
     private Integer idLoja;
 
     @NotBlank(message = "O campo Nome é obrigatorio")

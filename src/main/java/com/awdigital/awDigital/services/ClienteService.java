@@ -10,7 +10,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,15 +35,25 @@ public class ClienteService {
 
 
 
-    public Cliente save(ClienteDTO objDTO){
+    public Cliente save(ClienteDTO objDTO) {
         findByNome(objDTO);
         objDTO.setIdCliente(null);
-        return clienteRepository.save(modelMapper.map(objDTO, Cliente.class));
+
+        LocalDate diaPagamento = convertDiaPagamento(objDTO.getDiaPagamento());
+
+        Cliente cliente = modelMapper.map(objDTO, Cliente.class);
+        cliente.setDiaPagamento(diaPagamento);
+
+        return clienteRepository.save(cliente);
     }
 
+
     public Cliente upDate(ClienteDTO objDTO){
-        findById(objDTO.getIdCliente());// validação para ver se existe
-        return clienteRepository.save(modelMapper.map(objDTO, Cliente.class));//modelmapper transforma em DTO
+        var cliente = findById(objDTO.getIdCliente());// validação para ver se existe
+        LocalDate diaPagamento = convertDiaPagamento(objDTO.getDiaPagamento());
+        cliente.setDiaPagamento(diaPagamento);
+        //findById(objDTO.getIdCliente());// validação para ver se existe
+        return clienteRepository.save(cliente);//modelmapper transforma em DTO
     }
 
     public void delete(Integer id){
@@ -79,5 +90,22 @@ public class ClienteService {
         if(cat.isEmpty()){
             throw new ObjectNoteFoundException("Cliente não encontrado");
         }
+    }
+
+    private LocalDate convertDiaPagamento(String diaPagamento) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        return LocalDate.parse(diaPagamento, formatter);
+    }
+
+    public ClienteDTO mapToClienteDTO(Cliente cliente) {
+        ClienteDTO dto = new ClienteDTO();
+        dto.setIdCliente(cliente.getIdCliente());
+        dto.setNomeCliente(cliente.getNomeCliente());
+        dto.setCnpj(cliente.getCnpj());
+        dto.setNumeroContato(cliente.getNumeroContato());
+        dto.setValorGestao(cliente.getValorGestao());
+        dto.setDiaPagamento(String.valueOf(cliente.getDiaPagamento()));
+        dto.setQntdLojas(cliente.getQntdLojas());
+        return dto;
     }
 }

@@ -2,6 +2,8 @@ package com.awdigital.awDigital.models;
 
 import com.awdigital.awDigital.dtos.LojaDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -27,9 +29,17 @@ public class Loja implements Serializable {
 
 
     private String investimentoLoja;
+
+    /**
+     * A anotação @OnDelete é usada para definir a ação que deve ser executada quando
+     * uma loja é removida. No exemplo, usamos OnDeleteAction.CASCADE,
+     * o que significa que a remoção de uma loja também resultará na remoção (ou nulidade, dependendo do banco de dados)
+     * da relação com o cliente.
+     */
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "cliente_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Cliente cliente;
 
     public Loja(Integer idLoja, String nomeLoja, String numeroLoja, String investimentoLoja, Cliente cliente) {

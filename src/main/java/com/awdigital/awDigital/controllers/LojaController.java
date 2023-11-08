@@ -2,6 +2,7 @@ package com.awdigital.awDigital.controllers;
 
 
 import com.awdigital.awDigital.dtos.LojaDTO;
+import com.awdigital.awDigital.dtos.LojaFindAllDTO;
 import com.awdigital.awDigital.models.Loja;
 import com.awdigital.awDigital.services.LojaService;
 import org.modelmapper.ModelMapper;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @CrossOrigin("*")
 @RestController
@@ -31,14 +31,20 @@ public class LojaController {
         return ResponseEntity.status(HttpStatus.OK).body(new LojaDTO(loja));
     }
 
+
     @GetMapping
+    public ResponseEntity<List<LojaFindAllDTO>> findAllLojasByCliente(@RequestParam(value = "cliente", defaultValue = "0") Integer idCat) {
+        List<LojaFindAllDTO> lojasFindAllDTO = lojaService.findAll(idCat);
+        return ResponseEntity.ok().body(lojasFindAllDTO);
+    }
+    /*@GetMapping
     public ResponseEntity<List<LojaDTO>>findAll(@RequestParam(value = "cliente", defaultValue = "0") Integer id_cat){
         List<Loja> list = lojaService.findAll(id_cat);
         return ResponseEntity.ok().body(list.stream().map(x -> new LojaDTO(x)).collect(Collectors.toList()));
        // return ResponseEntity.ok().body(list.stream().map(x -> modelMapper.map(x, LivroDTO.class)).collect(Collectors.toList()));
 
         //localhost:8080/loja?cliente=valor-do-id
-    }
+    }*/
 
     @PostMapping
     public ResponseEntity<LojaDTO>save(@RequestParam(value = "cliente", defaultValue = "0")Integer id_cat,

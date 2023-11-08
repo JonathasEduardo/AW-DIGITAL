@@ -24,7 +24,7 @@ public class Cliente implements Serializable {
 
 
     @JsonIgnore
-    @OneToMany(mappedBy = "cliente")
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     private List<Loja> lojas = new ArrayList<>();
 
 
